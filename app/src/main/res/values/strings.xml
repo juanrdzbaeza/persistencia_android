@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">Persistencia</string>
-    <string name="nombre_de_la_persona">Nombre de la persona</string>
-    <string name="datos">datos</string>
-    <string name="grabar">GRABAR</string>
-    <string name="recuperar">RECUPERAR</string>
+    <string name="ingrese_numero">Ingrese numero</string>
+    <string name="verificar">VERIFICAR</string>
+    <string name="adivine_un_numero_entre_1_y_50">Adivine un numero entre 1 y 50</string>
+    <string name="puntuaje_0">Puntuaje 0</string>
+    <string name="reiniciar_puntuacion">REINICIAR PUNTUACION</string>
 </resources>
