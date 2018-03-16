@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Persistencia</string>
-    <string name="ingrese_mail">Ingrese mail</string>
-    <string name="ejecutar">EJECUTAR</string>
+    <string name="nombre_de_la_persona">Nombre de la persona</string>
+    <string name="datos">datos</string>
+    <string name="grabar">GRABAR</string>
+    <string name="recuperar">RECUPERAR</string>
 </resources>

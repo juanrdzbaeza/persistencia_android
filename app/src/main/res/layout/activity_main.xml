@@ -10,25 +10,52 @@
         android:id="@+id/et1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         android:ems="10"
-        android:hint="@string/ingrese_mail"
-        android:inputType="textEmailAddress"
+        android:hint="@string/nombre_de_la_persona"
+        android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <EditText
+        android:id="@+id/et2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:hint="@string/datos"
+        android:inputType="textMultiLine"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et1" />
+
     <Button
-        android:id="@+id/button"
+        android:id="@+id/btn1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginTop="8dp"
-        android:onClick="ejecutar"
-        android:text="@string/ejecutar"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et1" />
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:onClick="grabar"
+        android:text="@string/grabar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et2"
+        android:layout_marginLeft="16dp" />
+
+    <Button
+        android:id="@+id/btn2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:onClick="recuperar"
+        android:text="@string/recuperar"
+        app:layout_constraintStart_toEndOf="@+id/btn1"
+        app:layout_constraintTop_toBottomOf="@+id/et2"
+        android:layout_marginLeft="16dp" />
+
 </android.support.constraint.ConstraintLayout>

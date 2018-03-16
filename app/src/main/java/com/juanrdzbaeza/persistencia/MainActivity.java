@@ -6,10 +6,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
-    private EditText et1;
+    private EditText et1, et2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,44 +18,46 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         et1 = findViewById(R.id.et1);
-        /*
-        Obtenemos una referencia de un objeto de la clase SharedPreferences a través del método
-        getSharedPreferences. El primer parámetro es el nombre del archivo de preferencias y el
-        segundo la forma de creación del archivo (MODE_PRIVATE indica que solo esta aplicación
-        puede consultar el archivo XML que se crea)
-         */
-        SharedPreferences preferences = getSharedPreferences("datos", Context.MODE_PRIVATE);
-        /*
-        Para extraer los datos del archivo de preferencias debemos indicar el nombre a extraer
-        y un valor de retorno si dicho nombre no existe en el archivo de preferencias (en nuestro
-         ejemplo la primera vez que se ejecute nuestro programa como es lógico no existe el
-         archivo de preferencias lo que hace que Android lo cree, si tratamos de extraer el valor
-          de mail retornará el segundo parámetro es decir el String con una cadena vacía:
-         */
-        et1.setText(preferences.getString("mail",""));
+        et2 = findViewById(R.id.et2);
+
     }
 
-    public void ejecutar(View v){
-        /*
-        Cuando se presiona el botón "confirmar" lo que hacemos es grabar en el archivo de
-        preferencias el contenido del EditText en una variable llamada "mail":
-         */
-        SharedPreferences preferences = getSharedPreferences("datos", Context.MODE_PRIVATE);
+    /**
+     * Cuando se presiona el botón grabar:
+     * Extraemos los dos datos de los EditText, creamos un objeto de la clas
+     * SharedPReferences con el nombre de "agenda".
+     * Creamos un objeto de la clase Editor y procedemos a grabar en el
+     * archivo de preferencias mediante putString:
+     * @param v
+     */
+    public void grabar(View v){
+        String nombre                   = et1.getText().toString();
+        String datos                    = et2.getText().toString();
+        SharedPreferences preferences   = getSharedPreferences("agenda", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("mail",et1.getText().toString());
-        editor.commit();
-        finish();
-
-        /*
-        Debemos crear un objeto de la clase Editor y obtener la referencia del objeto de la clase
-        SharedPreferences que acabamos de crear. Mediante el método putString almacenamos en mail
-        el valor del String cargado en el EditText. Luego debemos llamar al método commit de la
-        clase Editor para que el dato quede almacenado en forma permanente en el archivo de
-        preferencias. Esto hace que cuando volvamos a arrancar la aplicación se recupere el último
-        mail ingresado.
-         */
-
+        editor.putString(nombre, datos);
+        editor.apply();
+        Toast.makeText(this, "Datos Guardados", Toast.LENGTH_LONG).show();
     }
+
+    /**
+     * Por otro lado tenemos la lógica para recuperar los datos de una persona de la agenda:
+     * Abrimos el archivo de preferencias y llamamos al método getString
+     * buscando el nombre ingresado en el et1. En el caso que lo encuentre
+     * retorna el dato asociado a dicha clave.
+     * @param v
+     */
+    public void recuperar(View v){
+        String nombre = et1.getText().toString();
+        SharedPreferences preferences   = getSharedPreferences("agenda", Context.MODE_PRIVATE);
+        String d = preferences.getString(nombre, "");
+        if (d.length() == 0){
+            Toast.makeText(this,"No existe dicho nombre en la agenda",Toast.LENGTH_LONG).show();
+        }else{
+            et2.setText(d);
+        }
+    }
+
 }
 
 
