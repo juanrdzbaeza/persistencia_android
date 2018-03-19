@@ -100,22 +100,54 @@ public class MainActivity extends AppCompatActivity {
         );
         SQLiteDatabase db = admin.getWritableDatabase();
 
-        String d        = et2.getText().toString();
+        String cod      = et1.getText().toString();
         Cursor fila     = db.rawQuery(
-                "select codigo,precio from articulos where descripcion='"+d+"'",null
+                "select descripcion,precio " +
+                        "from articulos " +
+                        "where codigo="+cod,null
         );
-        
+        // si fila = true significa que la consulta ha encontrado una coincidencia y la ha devuelto
         if (fila.moveToFirst()) {
             et2.setText(fila.getString(0));
             et3.setText(fila.getString(1));
         } else {
-            Toast.makeText(this, "No existe articulo con ese codigo", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "No existe articulo con ese código", Toast.LENGTH_SHORT).show();
         }
         db.close();
     }
 
+    /**
+     * En el método consultapordescripcion lo primero que hacemos es crear un objeto de la clase
+     * AdminSQLiteOpenHelper y obtener una referencia de la base de datos llamando al método
+     * getWritableDatabase.
+     *
+     * Seguidamente definimos una variable de la clase Cursor y la inicializamos con el valor
+     * devuelto por el método llamado rawQuery.
+     *
+     * Es importante notar en el where de la clausula SQL hemos dispuesto comillas simples entre
+     * el contenido de la variable descri:
+     * @param v
+     */
     public void consultaPorDescripcion(View v) {
-        
+        AdminSQLiteOpenHelper admin = new AdminSQLiteOpenHelper(
+                this, "administracion", null, 1
+        );
+        SQLiteDatabase db = admin.getWritableDatabase();
+
+        String descri       = et2.getText().toString();
+        Cursor fila         = db.rawQuery(
+                "select codigo,precio " +
+                        "from articulos " +
+                        "where descripcion="+descri,null
+        );
+
+        if (fila.moveToFirst()) {
+            et1.setText(fila.getString(0));
+            et3.setText(fila.getString(1));
+        } else {
+            Toast.makeText(this, "No existe articulo con esa descripción", Toast.LENGTH_SHORT).show();
+        }
+        db.close();
     }
 
 }
