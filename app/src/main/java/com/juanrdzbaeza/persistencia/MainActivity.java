@@ -2,6 +2,7 @@ package com.juanrdzbaeza.persistencia;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,8 +20,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         et1 = findViewById(R.id.et1);
-        et2 = findViewById(R.id.et1);
-        et3 = findViewById(R.id.et1);
+        et2 = findViewById(R.id.et2);
+        et3 = findViewById(R.id.et3);
 
     }
 
@@ -57,20 +58,42 @@ public class MainActivity extends AppCompatActivity {
         AdminSQLiteOpenHelper admin = new AdminSQLiteOpenHelper(
                 this,"administracion", null, 1
         );
-        SQLiteDatabase bd = admin.getWritableDatabase();
+        SQLiteDatabase db = admin.getWritableDatabase();
         String codigo           = et1.getText().toString();
         String descripcion      = et2.getText().toString();
         String precio           = et3.getText().toString();
+
+        //Toast.makeText(this, "prueba de impresion"+codigo+" "+descripcion+" "+precio+" ", Toast.LENGTH_SHORT).show();
+
         ContentValues registro  = new ContentValues();
         registro.put("codigo",codigo);
         registro.put("descripcion",descripcion);
         registro.put("precio",precio);
-        bd.insert("articulos",null, registro);
-        bd.close();
+
+        if(codigo.isEmpty() ){
+            Toast.makeText(this, "El codigo no puede estar vacío", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(descripcion.isEmpty()){
+            Toast.makeText(this, "la descripcion no puede estar vacía", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(precio.isEmpty()){
+            Toast.makeText(this, "El precio no puede estar vacío", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        try {
+            db.insert("articulos",null, registro);
+            Toast.makeText(this, "Se guardaron los datos del articulo", Toast.LENGTH_SHORT).show();
+        } catch (SQLException sql) {
+            Toast.makeText(this, "No introdujo ningun dato", Toast.LENGTH_SHORT).show();
+        }
+        db.close();
         et1.setText("");
         et2.setText("");
         et3.setText("");
-        Toast.makeText(this, "Se guardaron los datos del articulo", Toast.LENGTH_SHORT).show();
+
     }
 
     /**
@@ -100,19 +123,23 @@ public class MainActivity extends AppCompatActivity {
                 this,"administracion", null, 1
         );
         SQLiteDatabase db = admin.getWritableDatabase();
-
         String cod      = et1.getText().toString();
-        Cursor fila     = db.rawQuery(
-                "select descripcion,precio " +
-                        "from articulos " +
-                        "where codigo="+cod,null
-        );
-        // si fila = true significa que la consulta ha encontrado una coincidencia y la ha devuelto
-        if (fila.moveToFirst()) {
-            et2.setText(fila.getString(0));
-            et3.setText(fila.getString(1));
-        } else {
-            Toast.makeText(this, "No existe articulo con ese código", Toast.LENGTH_SHORT).show();
+
+        try {
+            Cursor fila     = db.rawQuery(
+                    "select descripcion,precio " +
+                            "from articulos " +
+                            "where codigo="+cod,null
+            );
+            // si fila = true significa que la consulta ha encontrado una coincidencia y la ha devuelto
+            if (fila.moveToFirst()) {
+                et2.setText(fila.getString(0));
+                et3.setText(fila.getString(1));
+            } else {
+                Toast.makeText(this, "No existe articulo con ese código", Toast.LENGTH_SHORT).show();
+            }
+        } catch (SQLException sql) {
+            Toast.makeText(this, "No introdujo ningun dato", Toast.LENGTH_SHORT).show();
         }
         db.close();
     }
@@ -134,19 +161,22 @@ public class MainActivity extends AppCompatActivity {
                 this, "administracion", null, 1
         );
         SQLiteDatabase db = admin.getWritableDatabase();
-
         String descri       = et2.getText().toString();
-        Cursor fila         = db.rawQuery(
-                "select codigo,precio " +
-                        "from articulos " +
-                        "where descripcion='"+descri+"'",null
-        );
 
-        if (fila.moveToFirst()) {
-            et1.setText(fila.getString(0));
-            et3.setText(fila.getString(1));
-        } else {
-            Toast.makeText(this, "No existe articulo con esa descripción", Toast.LENGTH_SHORT).show();
+        try {
+            Cursor fila         = db.rawQuery(
+                    "select codigo,precio " +
+                            "from articulos " +
+                            "where descripcion='"+descri+"'",null
+            );
+            if (fila.moveToFirst()) {
+                et1.setText(fila.getString(0));
+                et3.setText(fila.getString(1));
+            } else {
+                Toast.makeText(this, "No existe articulo con esa descripción", Toast.LENGTH_SHORT).show();
+            }
+        } catch (SQLException sql) {
+            Toast.makeText(this, "No introdujo ningun dato", Toast.LENGTH_SHORT).show();
         }
         db.close();
     }
@@ -165,96 +195,85 @@ public class MainActivity extends AppCompatActivity {
         SQLiteDatabase db   = admin.getWritableDatabase();
         String code         = et1.getText().toString();
 
-        int cantidadBorrada = db.delete(
-                "articulos","codigo="+code,null
-        );
+        if(code.isEmpty()){
+            Toast.makeText(this, "El codigo no puede ser vacío", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        try {
+            int cantidadBorrada = db.delete(
+                    "articulos","codigo="+code,null
+            );
+            if (cantidadBorrada == 1) {
+                Toast.makeText(this, "Se borró el articulo con codigo: "+code, Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "No existe el articulo con codigo: "+code, Toast.LENGTH_SHORT).show();
+            }
+        } catch (SQLException sql) {
+            Toast.makeText(this, "No introdujo ningun dato", Toast.LENGTH_SHORT).show();
+        }
         db.close();
         et1.setText("");
         et2.setText("");
         et3.setText("");
-        if (cantidadBorrada == 1) {
-            Toast.makeText(this, "Se borró el articulo con codigo: "+code, Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "No existe el articulo con codigo: "+code, Toast.LENGTH_SHORT).show();
-        }
     }
 
 
+    /**
+     * En la modificación de datos debemos crear un objeto de la clase ContentValues y mediante el
+     * método put almacenar los valores para cada campo que será modificado. Luego se llama al
+     * método update de la clase SQLiteDatabase pasando el nombre de la tabla, el objeto de la clase
+     * ContentValues y la condición del where (el cuanto parámetro en este ejemplo no se lo emplea)
+     * @param v
+     */
     public void update(View v) {
         AdminSQLiteOpenHelper admin = new AdminSQLiteOpenHelper(
                 this,"administracion", null, 1
         );
         SQLiteDatabase db       = admin.getWritableDatabase();
 
-        String cod              = et1.getText().toString();
-        String descri           = et2.getText().toString();
+        String codigo           = et1.getText().toString();
+        String descripcion      = et2.getText().toString();
         String precio           = et3.getText().toString();
 
-        /*
-        * awiiiiiiiiiii
-        */
-
-        ContentValues registro = new ContentValues();
-        registro.put("codigo",cod);
-        registro.put("descripcion",descri);
-        registro.put("precio",precio);
-
-
-        int cantidadModificada = db.update(
-                "articulos", registro, "codigo="+cod,null
-        );
-        db.close();
-        if (cantidadModificada == 1) {
-            Toast.makeText(this, "Se modificó el articulo con código: "+cod, Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "No existe el articulo con código: "+cod, Toast.LENGTH_SHORT).show();
+        if(codigo.isEmpty() ){
+            Toast.makeText(this, "El codigo no puede estar vacío", Toast.LENGTH_SHORT).show();
+            return;
         }
+        Cursor fila = null;
+        try {
+             fila     = db.rawQuery(
+                    "select descripcion,precio " +
+                            "from articulos " +
+                            "where codigo="+codigo,null
+            );
+        } catch (SQLException sql) {
+            Toast.makeText(this, "No introdujo ningun dato", Toast.LENGTH_SHORT).show();
+        }
+        if(fila.moveToFirst()){
+            if(descripcion.isEmpty()){
+                descripcion = fila.getString(0);
+            }
+            if(precio.isEmpty()){
+                precio = fila.getString(1);
+            }
+            ContentValues registro = new ContentValues();
+            registro.put("codigo",codigo);
+            registro.put("descripcion",descripcion);
+            registro.put("precio",precio);
+
+            try {
+                db.update(
+                        "articulos", registro, "codigo="+codigo,null
+                );
+            } catch (SQLException sql) {
+                Toast.makeText(this, "algo falló", Toast.LENGTH_SHORT).show();
+            }
+            Toast.makeText(this, "Se modificó el articulo con código: " + codigo, Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "No existe el articulo con código: "+codigo, Toast.LENGTH_SHORT).show();
+        }
+        db.close();
+
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
