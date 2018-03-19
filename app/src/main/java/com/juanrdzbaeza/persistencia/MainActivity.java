@@ -1,6 +1,7 @@
 package com.juanrdzbaeza.persistencia;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -24,6 +25,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
+     * Cuando se presiona el botón "ALTA" se ejecuta el método "alta" recordemos inicializar la
+     * propiedad "onClick" del botón desde la ventana de visualización del archivo XML.
+     *
      * Lo primero que hacemos en este método es crear un objeto de la clase que planteamos
      * anteriormente y le pasamos al constructor this (referencia del Activity actual),
      * "administracion" (es el nombre de la base de datos que crearemos en el caso que no exista)
@@ -68,10 +72,49 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(this, "Se guardaron los datos del articulo", Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * Cuando se presiona el botón "CONSULTA POR CODIGO" se ejecuta el método consultaporcodigo:
+     *
+     * En el método consultaporcodigo lo primero que hacemos es crear un objeto de la clase
+     * AdminSQLiteOpenHelper y obtener una referencia de la base de datos llamando al método
+     * getWritableDatabase.
+     *
+     * Seguidamente definimos una variable de la clase Cursor y la inicializamos con el valor
+     * devuelto por el método llamado rawQuery.
+     *
+     * La clase Cursos almacena en este caso una fila o cero filas (una en caso que hayamos
+     * ingresado un codigo existente en la tabla articulos), llamamos al método moveToFirst() de la
+     * clase Cursos y retorna true en caso de existir un articulo con el codigo ingresado, en caso
+     * contrario retorna cero.
+     *
+     * Para recuperar los datos propiamente dichos que queremos consultar llamamos al método
+     * getString y le pasamos la posición del campo a recuperar (comienza a numerarse en cero,
+     * en este ejemplo la columna cero representa el campo descripcion y la columna 1 representa
+     * el campo precio)
+     *
+     * @param v
+     */
+    public void consultaPrCodigo(View v) {
+        AdminSQLiteOpenHelper admin = new AdminSQLiteOpenHelper(
+                this,"administracion", null, 1
+        );
+        SQLiteDatabase db = admin.getWritableDatabase();
 
+        String d        = et2.getText().toString();
+        Cursor fila     = db.rawQuery(
+                "select codigo,precio from articulos where descripcion='"+d+"'",null
+        );
+        
+        if (fila.moveToFirst()) {
+            et2.setText(fila.getString(0));
+            et3.setText(fila.getString(1));
+        } else {
+            Toast.makeText(this, "No existe articulo con ese codigo", Toast.LENGTH_SHORT).show();
+        }
+        db.close();
+    }
 
-
-
+    
 }
 
 
