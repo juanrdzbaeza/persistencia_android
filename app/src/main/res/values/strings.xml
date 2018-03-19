@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Persistencia</string>
+    <string name="fecha">Fecha</string>
+    <string name="ingrese_fecha">Ingrese fecha</string>
     <string name="grabar">GRABAR</string>
+    <string name="recuperar">RECUPERAR</string>
 </resources>

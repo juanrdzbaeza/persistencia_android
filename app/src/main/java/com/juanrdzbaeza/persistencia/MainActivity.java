@@ -1,8 +1,6 @@
 package com.juanrdzbaeza.persistencia;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -16,7 +14,7 @@ import java.io.OutputStreamWriter;
 
 public class MainActivity extends AppCompatActivity {
 
-    private EditText et1;
+    private EditText et1, et2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,48 +22,63 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         et1 = findViewById(R.id.et1);
-        String[] archivos = fileList();
+        et2 = findViewById(R.id.et2);
 
-        if(existe(archivos, "notas.txt"))
-            try{
+
+    }
+
+    public void grabar(View v) {
+        String nameFile     = et1.getText().toString();
+        nameFile            = nameFile.replace('/','-');
+
+        try {
+            OutputStreamWriter archivo = new OutputStreamWriter(
+                    openFileOutput(nameFile, Activity.MODE_PRIVATE)
+            );
+            archivo.write(et2.getText().toString());
+            archivo.flush();
+            archivo.close();
+
+        } catch (IOException e) {
+            Toast.makeText(this, "Algo falló", Toast.LENGTH_SHORT).show();
+        }
+
+
+        Toast.makeText(this, "Los datos fueron grabados", Toast.LENGTH_SHORT).show();
+        et1.setText("");
+        et2.setText("");
+    }
+
+    public void recuperar(View v) {
+        String nameFile         = et1.getText().toString();
+        nameFile                = nameFile.replace('/','-');
+        boolean encontrado      = false;
+        String[] archivos = fileList(); // fileList() devuelve todos los ficheros que almacena la app
+
+        for (String f : archivos) {
+            if (nameFile.equals(f)) encontrado = true;
+        }
+        if (encontrado == true) {
+            try {
                 InputStreamReader archivo = new InputStreamReader(
-                        openFileInput("notas.txt")
+                        openFileInput(nameFile)
                 );
-                BufferedReader br = new BufferedReader(archivo);
-                String linea = br.readLine();
-                String todo = "";
+                BufferedReader br   = new BufferedReader(archivo);
+                String linea        = br.readLine();
+                String todo         = "";
                 while (linea != null){
-                    todo = todo + linea + "\n";
-                    linea = br.readLine();
+                    todo    = todo + linea + "\n";
+                    linea   = br.readLine();
                 }
                 br.close();
                 archivo.close();
-                et1.setText(todo);
-            }catch (IOException e){
-                Toast.makeText(this,"algo falló",Toast.LENGTH_SHORT).show();
+                et2.setText(todo);
+            } catch (IOException e) {
+                Toast.makeText(this, "Algo falló", Toast.LENGTH_SHORT).show();
             }
-
-    }
-
-    private boolean existe(String[] archivos, String archBusca){
-        for (String f : archivos) {
-            if (archBusca.equals(f)) return true;
+        } else {
+            Toast.makeText(this, "No existen datos para esa fecha", Toast.LENGTH_SHORT).show();
+            et2.setText("");
         }
-        return false;
-    }
-
-    public void grabar(View v){
-        try {
-            OutputStreamWriter archivo = new OutputStreamWriter(
-                    openFileOutput("notas.txt", Activity.MODE_PRIVATE)
-            );
-            archivo.write(et1.getText().toString());
-            archivo.flush();
-            archivo.close();
-        } catch (IOException e) {
-            Toast.makeText(this, "algo falló", Toast.LENGTH_SHORT).show();
-        }
-        Toast.makeText(this, "Los datos fueron grabado", Toast.LENGTH_SHORT).show();
-        finish();
     }
 }
