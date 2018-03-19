@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
      * @param v
      */
     public void alta(View v) {
+        // conexion con la base de datos
         AdminSQLiteOpenHelper admin = new AdminSQLiteOpenHelper(
                 this,"administracion", null, 1
         );
@@ -149,6 +150,36 @@ public class MainActivity extends AppCompatActivity {
         }
         db.close();
     }
+
+    /**
+     * Para borrar uno o más registros la clase SQLiteDatabase tiene un método que le pasamos en el
+     * primer parámetro el nombre de la tabla y en el segundo la condición que debe cumplirse para
+     * que se borre la fila de la tabla. El método delete retorna un entero que indica la cantidad
+     * de registros borrados:
+     * @param v
+     */
+    public void bajaPorCodigo(View v) {
+        AdminSQLiteOpenHelper admin = new AdminSQLiteOpenHelper(
+                this,"administracion",null,1
+        );
+        SQLiteDatabase db   = admin.getWritableDatabase();
+        String code         = et1.getText().toString();
+
+        int cantidadBorrada = db.delete(
+                "articulos","codigo="+code,null
+        );
+        db.close();
+        et1.setText("");
+        et2.setText("");
+        et3.setText("");
+        if (cantidadBorrada == 1) {
+            Toast.makeText(this, "Se borró el articulo con codigo: "+code, Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "No existe el articulo con codigo: "+code, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    
 
 }
 
