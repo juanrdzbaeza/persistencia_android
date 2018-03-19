@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
         Cursor fila         = db.rawQuery(
                 "select codigo,precio " +
                         "from articulos " +
-                        "where descripcion="+descri,null
+                        "where descripcion='"+descri+"'",null
         );
 
         if (fila.moveToFirst()) {
