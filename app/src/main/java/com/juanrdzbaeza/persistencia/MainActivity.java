@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
      *
      * @param v
      */
-    public void consultaPrCodigo(View v) {
+    public void consultaPorCodigo(View v) {
         AdminSQLiteOpenHelper admin = new AdminSQLiteOpenHelper(
                 this,"administracion", null, 1
         );
@@ -114,7 +114,10 @@ public class MainActivity extends AppCompatActivity {
         db.close();
     }
 
-    
+    public void consultaPorDescripcion(View v) {
+        
+    }
+
 }
 
 
