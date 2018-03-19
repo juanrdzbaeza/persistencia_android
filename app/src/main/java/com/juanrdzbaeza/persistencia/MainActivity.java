@@ -179,7 +179,37 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    
+
+    public void update(View v) {
+        AdminSQLiteOpenHelper admin = new AdminSQLiteOpenHelper(
+                this,"administracion", null, 1
+        );
+        SQLiteDatabase db       = admin.getWritableDatabase();
+
+        String cod              = et1.getText().toString();
+        String descri           = et2.getText().toString();
+        String precio           = et3.getText().toString();
+
+        /*
+        * awiiiiiiiiiii
+        */
+
+        ContentValues registro = new ContentValues();
+        registro.put("codigo",cod);
+        registro.put("descripcion",descri);
+        registro.put("precio",precio);
+
+
+        int cantidadModificada = db.update(
+                "articulos", registro, "codigo="+cod,null
+        );
+        db.close();
+        if (cantidadModificada == 1) {
+            Toast.makeText(this, "Se modificó el articulo con código: "+cod, Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "No existe el articulo con código: "+cod, Toast.LENGTH_SHORT).show();
+        }
+    }
 
 }
 
