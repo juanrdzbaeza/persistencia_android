@@ -1,6 +1,7 @@
 package com.juanrdzbaeza.persistencia;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -217,7 +218,6 @@ public class MainActivity extends AppCompatActivity {
         et3.setText("");
     }
 
-
     /**
      * En la modificación de datos debemos crear un objeto de la clase ContentValues y mediante el
      * método put almacenar los valores para cada campo que será modificado. Luego se llama al
@@ -276,4 +276,12 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Llamamos a la actividad que se encargara de mostrar el listado de todos los artículos
+     * @param v
+     */
+    public void verListadoArticulos(View v) {
+        Intent i = new Intent(this, MostrarListado.class);
+        startActivity(i);
+    }
 }

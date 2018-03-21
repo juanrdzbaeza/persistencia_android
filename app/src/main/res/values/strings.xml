@@ -8,4 +8,7 @@
     <string name="consulta_por_descripcion">Consulta por descripcion</string>
     <string name="baja_por_codigo">Baja por codigo</string>
     <string name="modificacion">Modificacion</string>
+    <string name="listado_de_articulos">LISTADO DE ARTICULOS</string>
+    <string name="title_activity_listado_articulos">ListadoArticulos</string>
+    <string name="salir">SALIR</string>
 </resources>
